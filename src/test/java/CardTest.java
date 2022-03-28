@@ -1,4 +1,5 @@
 import com.codeborne.selenide.Condition;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Keys;
 
@@ -17,10 +18,14 @@ public class CardTest{
         return LocalDate.now().plusDays(days).format(ofPattern("dd.MM.yyyy"));
     }
 
+    @BeforeEach
+    public void setUp(){
+        open("http://localhost:9999/");
+    }
+
     @Test
     public void test(){
         String plannigDate = generateDate(5);
-        open("http://localhost:9999/");
         $x("//input[@type='text']").val("Уфа");
         $("[placeholder='Дата встречи']").sendKeys(chord(Keys.SHIFT, Keys.HOME), Keys.DELETE,plannigDate);
         $x("//input[@name='name']").val("Кирилл Мит");
@@ -32,7 +37,6 @@ public class CardTest{
     @Test
     public void notCity(){
         String plannigDate = generateDate(5);
-        open("http://localhost:9999/");
         $x("//input[@type='text']").val("");
         $("[placeholder='Дата встречи']").sendKeys(chord(Keys.SHIFT, Keys.HOME), Keys.DELETE,plannigDate);
         $x("//input[@name='name']").val("Кирилл Мит");
@@ -44,7 +48,6 @@ public class CardTest{
     @Test
     public void notName(){
         String plannigDate = generateDate(5);
-        open("http://localhost:9999/");
         $x("//input[@type='text']").val("Уфа");
         $("[placeholder='Дата встречи']").sendKeys(chord(Keys.SHIFT, Keys.HOME), Keys.DELETE,plannigDate);
         $x("//input[@name='name']").val("");
@@ -56,7 +59,6 @@ public class CardTest{
     @Test
     public void notTel(){
         String plannigDate = generateDate(5);
-        open("http://localhost:9999/");
         $x("//input[@type='text']").val("Уфа");
         $("[placeholder='Дата встречи']").sendKeys(chord(Keys.SHIFT, Keys.HOME), Keys.DELETE,plannigDate);
         $x("//input[@name='name']").val("Анна");
@@ -67,7 +69,6 @@ public class CardTest{
     }
     @Test
     public void test2(){
-        open("http://localhost:9999/");
         String plannigDate = generateDate(5);
         $x("//input[@type='text']").val("Уфа");
         $("[placeholder='Дата встречи']").sendKeys(chord(Keys.SHIFT, Keys.HOME), Keys.DELETE,plannigDate);
@@ -78,7 +79,6 @@ public class CardTest{
     }
     @Test
     public void notDate(){
-        open("http://localhost:9999/");
         $x("//input[@type='text']").val("Уфа");
         $x("//input[@name='name']").val("Кирилл Мит");
         $x("//input[@name='phone']").val("+89370659485");
@@ -89,15 +89,13 @@ public class CardTest{
     @Test
     void shouldSendForm() {
         String planningDate = generateDate(5);
-        open("http://localhost:9999/");
         $("[data-test-id='city'] input").val("Новосибирск");
         $("[placeholder='Дата встречи']").sendKeys(chord(Keys.SHIFT, Keys.HOME), Keys.DELETE, planningDate);
         $("[data-test-id='name'] input").val("Олег");
         $("[data-test-id='phone'] input").val("+79993336666");
         $("[data-test-id=agreement]>.checkbox__box").click();
         $(withText("Забронировать")).click();
-        $("[data-test-id=notification] .notification__title").shouldBe(visible, ofSeconds(16))
-                .shouldHave(exactText("Успешно!"));
-
+        $("[class='notification__content']")
+                .shouldHave(Condition.text("Встреча успешно забронирована на " + planningDate), Duration.ofSeconds(15));
     }
 }

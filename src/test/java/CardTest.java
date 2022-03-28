@@ -27,7 +27,7 @@ public class CardTest{
         $x("//input[@name='phone']").val("+89370659485");
         $("[data-test-id='agreement']").click();
         $(withText("Забронировать")).click();
-        $x("//*[contains(text(),'Успешно!')]").should(appear, ofSeconds(10));
+        $x("//*[contains(text(),'Успешно!')]").should(appear, ofSeconds(16));
 }
     @Test
     public void notCity(){
